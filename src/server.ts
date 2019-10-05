@@ -1,4 +1,4 @@
-import { Client, CLIENT_OPCODES, ID, ID_BYTES_COUNT } from './client';
+import { Client, ID, ID_BYTES_COUNT, OPCODES } from './client';
 import * as WebSocket from 'ws';
 
 export class Server {
@@ -14,8 +14,9 @@ export class Server {
   }
 
   broadcastNewClient (client: Client) {
-    const data = new Uint8Array(ID_BYTES_COUNT);
-    new DataView(data).setUint16(0, client.getId(), true);
+    const data = new Uint8Array(1 + ID_BYTES_COUNT);
+    data[0] = OPCODES.addPlayer;
+    new DataView(data).setUint16(1, client.getId(), true);
     this.broadcast(data, client);
   }
 

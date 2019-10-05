@@ -11,11 +11,11 @@ export type OpCodeHandler = (client: Client, data: Buffer) => void;
 // From client to server
 export enum CLIENT_OPCODES {
   location = 0,
-  action
+  action = 1
 }
 
 // From server -> client
-export enum SERVER_OPCODES {
+export enum OPCODES {
   /**
    * Sending ID for new user to identify him
    */
@@ -24,14 +24,14 @@ export enum SERVER_OPCODES {
    * Sends player ids. Called for new player with
    * all existing and broadcasted for all on new player conneciton
    */
-  addPlayer,
+  addPlayer = 1,
   /**
    * For new connection sends coordinate of other users
    * Broadcast for others coord of the player
    */
-  location,
-  action,
-  removePlayer
+  location = 2,
+  action = 3,
+  removePlayer = 4
 }
 
 
@@ -53,9 +53,9 @@ export class Client {
     ws.send(`Here's your favorite video ;-)`);
     ws.send('your id: ' + this.id);
   
-    var buf = new Uint8Array(2);
-    buf[0] = SERVER_OPCODES.identification;
-    buf[1] = this.id;
+    var buf = new Uint8Array(1 + ID_BYTES_COUNT);
+    buf[0] = OPCODES.identification;
+    new DataView(buf).setUint16(1, this.id, true);
     ws.send(buf);
   }
 
