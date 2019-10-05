@@ -1,39 +1,13 @@
 import * as WebSocket from 'ws';
 import * as path from 'path';
 import { Server } from './server';
+import { OPCODES, CLIENT_OPCODES } from './opcodes';
 
 export const ID_BYTES_COUNT = 2;
 export const ID_MAX_VALUE = (1 << (8 * ID_BYTES_COUNT)) - 1;
 
 export type ID = number;
 export type OpCodeHandler = (client: Client, data: Buffer) => void;
-
-// From client to server
-export enum CLIENT_OPCODES {
-  location = 0,
-  action = 1
-}
-
-// From server -> client
-export enum OPCODES {
-  /**
-   * Sending ID for new user to identify him
-   */
-  identification = 0, 
-  /**
-   * Sends player ids. Called for new player with
-   * all existing and broadcasted for all on new player conneciton
-   */
-  addPlayer = 1,
-  /**
-   * For new connection sends coordinate of other users
-   * Broadcast for others coord of the player
-   */
-  location = 2,
-  action = 3,
-  removePlayer = 4
-}
-
 
 export class Client {
 
@@ -54,7 +28,7 @@ export class Client {
     ws.send('your id: ' + this.id);
   
     var buf = new Uint8Array(1 + ID_BYTES_COUNT);
-    buf[0] = OPCODES.identification;
+    buf[0] = OPCODES.identification_s;
     new DataView(buf).setUint16(1, this.id, true);
     ws.send(buf);
   }
