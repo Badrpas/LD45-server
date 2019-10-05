@@ -25,7 +25,7 @@ After first **Type Byte** we are sending data in next structure:
 | 2           | Y coordinate    |
 | ...         | ...             |
 
-Data might go in same order as needed and needs to be parsed until end of message.
+*Data might go in same order as needed and needs to be parsed until end of message.*
 
 ### Action
 
@@ -39,7 +39,7 @@ After first **Type Byte** we are sending data in next structure:
 | 1           | Action          |
 | ...         | ...             |
 
-Data might go in same order as needed and needs to be parsed until end of message.
+*Data might go in same order as needed and needs to be parsed until end of message.*
 
 ### Identification
 
@@ -49,5 +49,5 @@ After first **Type Byte** we are sending data in next structure:
 | ----        | ----            |
 | 2           | Client ID       |
 
-Probably server should return Client ID immediately after client connects to it.
+**Probably server should return Client ID immediately after client connects to it.**
 
