@@ -20,6 +20,6 @@ export enum OPCODES {
   action_s = 3,
   removePlayer_s = 4,
   
-  location_c = 0,
-  action_c = 1
+  location_c = 100,
+  action_c = 101
 }
