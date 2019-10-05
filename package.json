@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",
+  "scripts": {
+    "build": "npx tsc -p",
+    "watch": "npx tsc -w"
+  },
   "devDependencies": {
     "@types/node": "^12.7.11",
     "typescript": "^3.6.3"
