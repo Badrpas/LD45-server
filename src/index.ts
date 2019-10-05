@@ -8,7 +8,7 @@ wss.on('connection', function connection(ws) {
     if (message instanceof Buffer) {
       console.log(`It's a Buffer yo`);
 
-      const data = new Uint8Array(message).map(String).join(' ');
+      const data = new Uint8Array(message).map(x => parseInt('' + x, 16)).join(' ');
       console.log(data);
       
       this.send(data);
