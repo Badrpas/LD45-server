@@ -3,6 +3,7 @@ import * as path from 'path';
 import { Server } from './server';
 import { OPCODES, CLIENT_OPCODES } from './opcodes';
 import { handlers } from './handlers';
+import { Player } from './player';
 
 export const ID_BYTES_COUNT = 2;
 export const ID_MAX_VALUE = (1 << (8 * ID_BYTES_COUNT)) - 1;
@@ -35,6 +36,12 @@ export class Client {
     new DataView(buf.buffer, buf.byteOffset).setUint16(1, this.id, true);
 
     ws.send(buf);
+  }
+
+  private _player?: Player;
+  
+  get player (): Player {
+    return this._player || (this._player = new Player);
   }
 
   getId(): number {
