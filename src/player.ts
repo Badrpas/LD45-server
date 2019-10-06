@@ -54,8 +54,16 @@ export class Position extends DataContainer {
   }
 }
 
-export class Action extends DataContainer.sized(5) {
-  public size = 5;
+export class Action extends DataContainer {
+  public x: number = 0;
+  public y: number = 0;
+  public action: number = 0;
+  set (view: DataView) {
+    this.x = view.getUint16(0, true);
+    this.y = view.getUint16(2, true);
+    this.action = view.getUint8(4)
+    this.needsUpdate = true;
+  }
 }
 
 export class Player {
