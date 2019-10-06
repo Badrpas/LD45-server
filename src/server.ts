@@ -19,12 +19,9 @@ export class Server {
   }
 
   update() {
-    const clients = [];
-    for (let client of this.clients.values()) {
-      if (client.player.updated) {
-        clients.push(client);
-      }
-    }
+    const clients = [...this.clients]
+                        .filter(([id, client]) => client.player.position.needsUpdate)
+                        .map(([id, client]) => client);
     if (!clients.length) return;
 
     const arrBuf = new ArrayBuffer(1 + 6 * clients.length);
@@ -32,9 +29,9 @@ export class Server {
     
     clients.reduce((view, client, index) => {
       view.setUint16(index * 6 + 0, client.getId(), true);
-      view.setUint16(index * 6 + 2, client.player.x, true);
-      view.setUint16(index * 6 + 4, client.player.y, true);
-      client.player.updated = false;
+      view.setUint16(index * 6 + 2, client.player.position.x, true);
+      view.setUint16(index * 6 + 4, client.player.position.y, true);
+      client.player.position.needsUpdate = false;
       return view;
     }, new DataView(arrBuf, 1));
 
