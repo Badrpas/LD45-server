@@ -17,7 +17,7 @@ export class Server {
   broadcastNewClient (client: Client) {
     const data = new Uint8Array(1 + ID_BYTES_COUNT);
     data[0] = OPCODES.addPlayer_s;
-    new DataView(data).setUint16(1, client.getId(), true);
+    new DataView(data.buffer).setUint16(1, client.getId(), true);
     this.broadcast(data, client);
   }
 

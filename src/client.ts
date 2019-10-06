@@ -2,12 +2,15 @@ import * as WebSocket from 'ws';
 import * as path from 'path';
 import { Server } from './server';
 import { OPCODES, CLIENT_OPCODES } from './opcodes';
+import { handlers } from './handlers';
 
 export const ID_BYTES_COUNT = 2;
 export const ID_MAX_VALUE = (1 << (8 * ID_BYTES_COUNT)) - 1;
 
 export type ID = number;
 export type OpCodeHandler = (client: Client, data: Buffer) => void;
+
+const debugBuffer = (buf: Buffer):string => Array.from(new Uint8Array(buf)).map(x => x.toString(16)).map(s => s.length === 1 ? ' ' + s : s).join(' ');
 
 export class Client {
 
@@ -29,7 +32,8 @@ export class Client {
   
     var buf = new Uint8Array(1 + ID_BYTES_COUNT);
     buf[0] = OPCODES.identification_s;
-    new DataView(buf).setUint16(1, this.id, true);
+    new DataView(buf.buffer, buf.byteOffset).setUint16(1, this.id, true);
+
     ws.send(buf);
   }
 
@@ -42,27 +46,27 @@ export class Client {
   }
 
   onMessage (message: Buffer | string) {
-    if (message instanceof Buffer) {
-      console.log(`It's a Buffer yo`);
-      this.processMessage(message);
-    } else {
-      console.log('What the heck is that he sending me?:');
-      console.log(message);
+    try {
+      if (message instanceof Buffer) {
+        console.log('received following buffer:', debugBuffer(message));
+        this.processMessage(message);
+      } else {
+        console.log('What the heck is that he sending me?:');
+        console.log(message);
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
   processMessage (data: Buffer) {
-    const buf = new DataView(data, 0, 1);
-    const opCode = buf.getUint8(0);
-  
-    const typeValue = <CLIENT_OPCODES>opCode;
-    const typeKey = CLIENT_OPCODES[typeValue];
+    const view = new DataView(data.buffer, data.byteOffset, 1);
+    const opCode = view.getUint8(0);
 
-    const handlerModulePath = path.join('handlers', typeKey);
-    const handler: OpCodeHandler = require(handlerModulePath).handler;
+    const handler = handlers.get(opCode);
   
     if (!handler) {
-      throw new Error(`No handler found for ${CLIENT_OPCODES[typeValue]} (${opCode})`);
+      throw new Error(`No handler found for ${OPCODES[opCode]} (${opCode})`);
     }
   
     handler(this, data);
