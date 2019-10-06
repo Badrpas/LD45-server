@@ -10,4 +10,5 @@ handlers.set(OPCODES.location_c, (client: Client, data: DataView) => {
 
 handlers.set(OPCODES.action_c, (client: Client, data: DataView) => {
   console.log('OPCODES.action_c handler');
+  client.player.action.set(data);
 });

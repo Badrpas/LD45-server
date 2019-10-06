@@ -36,6 +36,25 @@ export class Server {
     }, new DataView(arrBuf, 1));
 
     this.broadcast(Buffer.from(arrBuf));
+
+    const clients_action = [...this.clients]
+      .filter(([id, client]) => client.player.action.needsUpdate)
+      .map(([id, client]) => client);
+    if (!clients_action.length) return;
+
+    const arrBufAction = new ArrayBuffer(1 + 7 * clients_action.length);
+    new DataView(arrBufAction, 0, 1).setUint8(0, OPCODES.action_s);
+
+    clients_action.reduce((view, client, index) => {
+      view.setUint16(index * 7 + 0, client.getId(), true);
+      view.setUint16(index * 7 + 2, client.player.action.x, true);
+      view.setUint16(index * 7 + 4, client.player.action.y, true);
+      view.setUint8(index * 7 + 6, client.player.action.action);
+      client.player.action.needsUpdate = false;
+      return view;
+    }, new DataView(arrBufAction, 1));
+
+    this.broadcast(Buffer.from(arrBufAction));
   }
 
 
