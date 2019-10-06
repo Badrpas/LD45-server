@@ -5,16 +5,27 @@
 There might be different types of message  
 Currently in first byte we're sending type
 
-| Byte | Type            |
-| ---- | ----            |
-| 00   | Nothing         |
-| 01   | Location        |
-| 02   | Action          |
-| 03   | Identification  |
-| 04   | Nothing         |
-| 05   | Nothing         |
+| Byte | Type             |
+| ---- | ----             |
+| 00   | identification_s |
+| 01   | addPlayer_s      |
+| 02   | location_s       |
+| 03   | action_s         |
+| 04   | removePlayer_s   |
+| 100  | location_c       |
+| 101  | action_c         |
 
-### Location
+### Identification (server)
+
+After first **Type Byte** we are sending data in next structure:
+
+| Byte amount | Data            |
+| ----        | ----            |
+| 2           | Client ID       |
+
+**Server should return Client ID immediately after client connects to it.**
+
+### Location (server)
 
 After first **Type Byte** we are sending data in next structure:
 
@@ -27,7 +38,7 @@ After first **Type Byte** we are sending data in next structure:
 
 *Data might go in same order as needed and needs to be parsed until end of message.*
 
-### Action
+### Action (server)
 
 After first **Type Byte** we are sending data in next structure:
 
@@ -41,13 +52,33 @@ After first **Type Byte** we are sending data in next structure:
 
 *Data might go in same order as needed and needs to be parsed until end of message.*
 
-### Identification
+### RemovePlayer (server)
 
 After first **Type Byte** we are sending data in next structure:
 
 | Byte amount | Data            |
 | ----        | ----            |
 | 2           | Client ID       |
+| ...         | ...             |
 
-**Probably server should return Client ID immediately after client connects to it.**
+*Data might go in same order as needed and needs to be parsed until end of message.*
 
+
+### Location (client)
+
+After first **Type Byte** we are sending data in next structure:
+
+| Byte amount | Data            |
+| ----        | ----            |
+| 2           | X coordinate    |
+| 2           | Y coordinate    |
+
+### Action (client)
+
+After first **Type Byte** we are sending data in next structure:
+
+| Byte amount | Data            |
+| ----        | ----            |
+| 2           | X coordinate    |
+| 2           | Y coordinate    |
+| 1           | Action          |
